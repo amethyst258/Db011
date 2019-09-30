@@ -1,6 +1,7 @@
 ﻿@model List<Book>
+@using database2.Extention
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "รายการหนังสือ";
 }
 
 
@@ -20,15 +21,15 @@
         <th>
             @Html.DisplayNameFor(m => m[0].Price)
         </th>
+        <th>
+            @Html.DisplayNameFor(m => m[0].BookType)
+        </th>
         @if (User.Identity.IsAuthenticated)
         {
             <th>
                 (คำสั่ง)
             </th>
         }
-        <th>
-            (คำสั่ง)
-        </th>
     </tr>
     @foreach (var item in Model)
     {
@@ -42,17 +43,19 @@
     <td>
         @Html.DisplayFor(m => item.Price)
     </td>
-    @if (User.Identity.IsAuthenticated)
-    {
-<td>
-    <a asp-controller="Book" asp-action="BookEdit" asp-route-Id="@item.Id">แก้ไข</a>
-    <a asp-controller="Book" asp-action="BookDelete" asp-route-Id="@item.Id">ลบ</a>
-</td>
-    }
     <td>
-        <a asp-controller="Book" asp-action="BookEdit" asp-route-Id="@item.Id">แก้ไข</a>
-        <a asp-controller="Book" asp-action="BookDelete" asp-route-Id="@item.Id">ลบ</a>
+        @item.BookType.GetDisplayName()
     </td>
+    @if (User.Identity.IsAuthenticated && User.IsInRole("User"))
+    {
+        <td>
+            <a asp-controller="Book" asp-action="BookEdit" asp-route-Id="@item.Id">แก้ไข</a>
+            @if (User.IsInRole("Administrator"))
+            {
+            <a asp-controller="Book" asp-action="BookDelete" asp-route-Id="@item.Id">ลบ</a>
+            }
+        </td>
+    }
 </tr>
     }
 </table>

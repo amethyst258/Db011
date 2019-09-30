@@ -22,14 +22,14 @@ namespace database2.Controllers
             var model = await _context.Books.ToListAsync();
             return View(model);
         }
-        [Authorize]
+        [Authorize(Roles = "User")]
         public IActionResult AddBook()
         {
             return View();
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> AddBook(Book model)
         {
             var oldBook = await _context.Books.AnyAsync(b => b.Name == model.Name);
@@ -48,7 +48,7 @@ namespace database2.Controllers
             }
             return View(model);
         }
-        [Authorize]
+        [Authorize(Roles = "User")]
         public async Task<IActionResult> BookEdit(int Id)
         {
             var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == Id); 
@@ -72,13 +72,14 @@ namespace database2.Controllers
                 {
                     book.Name = model.Name;
                     book.Price = model.Price;
+                    book.BookType = model.BookType;
                     await _context.SaveChangesAsync();
                 }
                 return RedirectToAction("Index");
             }
             return View(model);
         }
-        [Authorize]
+        [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> BookDelete(int Id)
         {
             var book = await _context.Books.FirstOrDefaultAsync(b => b.Id == Id);
